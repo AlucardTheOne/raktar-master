@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Megrendelések</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}">Főoldal</a>
+        <a href="{{ url_for('products') }}">Termékek</a>
+        <a href="{{ url_for('customers') }}">Ügyfelek</a>
+        <a class ="disabled">Megrendelések</a>
+        <a href="{{ url_for('stock') }}">Raktáron</a>
+    </nav>
+    <h1>Megrendelések</h1>
+
+    <!-- Hibaüzenetek -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <!-- Megrendelés hozzáadása gomb -->
+        <a href="{{ url_for('add_order') }}" class="button-wrapper">
+            <button>Megrendelés hozzáadása</button>
+        </a>
+        <div class="dropdown">
+            <button class="dropbtn">Sorok száma: {{ query_params['per_page'] }}</button>
+            <div class="dropdown-content">
+                {% for size in [5, 10, 20, 50, 100] %}
+                <a href="{{ url_for('orders', **dict(query_params, per_page=size, page=1)) }}">{{ size }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                    <th>
+                        <a href="{{ url_for('orders', **dict(query_params, order_by=column.name, desc=0 if query_params['order_by'] == column.name and query_params['desc'] else 1)) }}">
+                            {{ column.label }} {{ '▼' if query_params['order_by'] == column.name and query_params['desc'] else '▲' }}
+                        </a>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>
+                        {% if not order.teljesitve %}
+                        <a href="{{ url_for('order_details', order_id=order.order_id) }}">
+                            {{ order.order_id }}
+                        </a>
+                        {% else %}
+                        {{ order.order_id }}
+                        {% endif %}
+                    </td>
+
+                    <td>{{ order.customer_name }}</td>
+                    <!-- Lezárva oszlop -->
+                    <td>
+                        <form action="{{ url_for('update_order_status', order_id=order.order_id) }}" method="POST" class="nem">
+                            <!-- Lezárva checkbox -->
+                            <input type="checkbox" name="lezarva" {% if order.lezarva %}checked{% endif %} onchange="this.form.submit()" {% if order.teljesitve %}disabled{% endif %}>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{{ url_for('update_order_status', order_id=order.order_id) }}" method="POST" class="nem">
+                            <!-- Teljesítve checkbox -->
+                            <input type="checkbox" name="teljesitve" {% if order.teljesitve %}checked{% endif %} onchange="this.form.submit()" {% if order.teljesitve %}disabled{% endif %}>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="{{ url_for('orders', **dict(query_params, page=1)) }}">Első oldal</a>
+        <a href="{{ url_for('orders', **dict(query_params, page=page-1)) }}">Előző</a>
+        {% endif %}
+    
+        {% for p in range(start_page, end_page + 1) %}
+        <a href="{{ url_for('orders', **dict(query_params, page=p)) }}" class="{% if p == page %}active{% endif %}">{{ p }}</a>
+        {% endfor %}
+    
+        {% if page < total_pages %}
+        <a href="{{ url_for('orders', **dict(query_params, page=page+1)) }}">Következő</a>
+        <a href="{{ url_for('orders', **dict(query_params, page=total_pages)) }}">Utolsó oldal</a>
+        {% endif %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Raktári Termék Hozzáadása</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}">Főoldal</a>
+        <a href="{{ url_for('products') }}">Termékek</a>
+        <a href="{{ url_for('customers') }}">Ügyfelek</a>
+        <a href="{{ url_for('orders') }}">Megrendelések</a>
+        <a class="disabled">Raktáron</a>
+    </nav>
+    <h1>Új Raktári Termék Hozzáadása</h1>
+
+    <form method="POST">
+        <label for="cikkszam">Cikkszám:</label>
+        <input type="text" id="cikkszam" name="cikkszam" required><br>
+
+        <label for="lokacio">Lokáció:</label>
+        <input type="text" id="lokacio" name="lokacio" required><br>
+
+        <label for="mennyiseg">Mennyiség:</label>
+        <input type="number" id="mennyiseg" name="mennyiseg" required><br>
+
+        <input type="submit" value="Hozzáadás">
+    </form>
+</body>
+</html>

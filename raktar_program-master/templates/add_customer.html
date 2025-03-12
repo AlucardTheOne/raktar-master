@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Új ügyfél hozzáadása</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}">Főoldal</a>
+        <a href="{{ url_for('products') }}">Termékek</a>
+        <a class="disabled">Ügyfelek</a>
+        <a href="{{ url_for('orders') }}">Megrendelések</a>
+        <a href="{{ url_for('stock') }}">Raktáron</a>
+    </nav>
+
+    <h1>Új ügyfél hozzáadása</h1>
+
+    <!-- Hibaüzenet megjelenítése -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="nev">Név:</label>
+        <input type="text" id="nev" name="nev" required><br>
+
+        <label for="iranyitoszam">Irányítószám:</label>
+        <input type="text" id="iranyitoszam" name="iranyitoszam" required><br>
+
+        <label for="varos">Város:</label>
+        <input type="text" id="varos" name="varos" required><br>
+
+        <label for="utca">Utca:</label>
+        <input type="text" id="utca" name="utca" required><br>
+
+        <label for="hazszam">Házszám:</label>
+        <input type="text" id="hazszam" name="hazszam" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+
+        <input type="submit" value="Hozzáadás">
+    </form>
+
+</body>
+</html>
